@@ -30,4 +30,6 @@ func LoadRouter(engine *gin.Engine) {
 	engine.POST("/v1/quantitative/saveConf", service.V1_Quantitative_SaveConf)   // 保存策略
 	engine.POST("/v1/quantitative/stopConf", service.V1_Quantitative_StopConf)   // 停止策略
 	engine.POST("/v1/quantitative/startConf", service.V1_Quantitative_StartConf) // 开始策略
+
+	engine.GET("/v1/quantitative/getCodeDiffPrice", service.V1_Quantitative_GetCodeDiffPrice)
 }

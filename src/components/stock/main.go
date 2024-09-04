@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -161,4 +162,16 @@ func (s *stockComponent) GetKlineToday(stockCode string) (ret KlineTodayVo) {
 	}
 	json.Unmarshal([]byte(bodyString), &ret)
 	return ret
+}
+
+func (s *stockComponent) GetDiff(stockCode string) float64 {
+	GKT := s.GetKlineToday(stockCode)
+	var length = len(GKT.Data.Trends)
+	var curr = strings.Split(GKT.Data.Trends[length-1], ",")[1]
+	var last = strings.Split(GKT.Data.Trends[length-3], ",")[1]
+	fmt.Println("curr", curr)
+	fmt.Println("last", last)
+	currPrice, _ := strconv.ParseFloat(curr, 64)
+	lastPrice, _ := strconv.ParseFloat(last, 64)
+	return currPrice - lastPrice
 }
