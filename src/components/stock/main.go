@@ -108,3 +108,57 @@ func (s *stockComponent) GetKlineHis(stockCode string) (ret KlineHisVo) {
 	json.Unmarshal([]byte(bodyString), &ret)
 	return ret
 }
+
+type KlineTodayVo struct {
+	Rc     int    `json:"rc"`
+	Rt     int    `json:"rt"`
+	Svr    int    `json:"svr"`
+	Lt     int    `json:"lt"`
+	Full   int    `json:"full"`
+	Dlmkts string `json:"dlmkts"`
+	Data   struct {
+		Code          string   `json:"code"`
+		Market        int      `json:"market"`
+		Type          int      `json:"type"`
+		Status        int      `json:"status"`
+		Name          string   `json:"name"`
+		Decimal       int      `json:"decimal"`
+		PreSettlement float64  `json:"preSettlement"`
+		PreClose      float64  `json:"preClose"`
+		Beticks       string   `json:"beticks"`
+		TrendsTotal   int      `json:"trendsTotal"`
+		Time          int      `json:"time"`
+		Kind          int      `json:"kind"`
+		PrePrice      float64  `json:"prePrice"`
+		Trends        []string `json:"trends"`
+	} `json:"data"`
+}
+
+func (s *stockComponent) GetKlineToday(stockCode string) (ret KlineTodayVo) {
+	market := StockComponent.GetMarket(stockCode)
+	URL, NAME := utils.ReplaceTarget(constant.TARGET_KLine_TDY, market, stockCode)
+	fmt.Println("URL", URL)
+	resp, err := http.Get(URL)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	defer resp.Body.Close()
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return
+	}
+
+	// 将字节切片转换为字符串
+	bodyString := string(bodyBytes)
+	bodyString = strings.ReplaceAll(bodyString, NAME, "")
+	// 移除 JSONP 回调函数部分
+	callbackIndex := strings.Index(bodyString, "(")
+	if callbackIndex >= 0 {
+		bodyString = bodyString[callbackIndex+1 : len(bodyString)-2]
+		bodyString = strings.TrimSpace(bodyString)
+	}
+	json.Unmarshal([]byte(bodyString), &ret)
+	return ret
+}

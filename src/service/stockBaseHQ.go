@@ -34,5 +34,7 @@ func V1_StockBaseHQ_GET_KLINE_HIS(c *gin.Context) {
 }
 
 func V1_StockBaseHQ_GET_KLINE_TODAY(c *gin.Context) {
-
+	code := c.Query("code")
+	resp := component_stock.StockComponent.GetKlineToday(code)
+	utils.AbortWithSucc(c, resp.Data)
 }
