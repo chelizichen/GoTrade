@@ -1,3 +1,5 @@
 GoTradeBackServer
 
 go.sum
+
+*.tar.gz

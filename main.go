@@ -2,7 +2,10 @@ package main
 
 import (
 	"com_sgrid_gotrade/src/components"
+	component_cache "com_sgrid_gotrade/src/components/cache"
+	component_db "com_sgrid_gotrade/src/components/db"
 	"com_sgrid_gotrade/src/router"
+	"com_sgrid_gotrade/src/schedule"
 	"fmt"
 	"os"
 )
@@ -10,6 +13,9 @@ import (
 func init() {
 	components.LoadComponents()
 	router.LoadRouter(components.Gin_Server)
+	component_db.LoadDB(components.Sgrid_Conf)
+	component_cache.LoadCache(components.Sgrid_Conf)
+	defer schedule.InitSchedule()
 }
 
 func main() {

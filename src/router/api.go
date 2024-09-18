@@ -31,5 +31,6 @@ func LoadRouter(engine *gin.Engine) {
 	engine.POST("/v1/quantitative/stopConf", service.V1_Quantitative_StopConf)   // 停止策略
 	engine.POST("/v1/quantitative/startConf", service.V1_Quantitative_StartConf) // 开始策略
 
-	engine.GET("/v1/quantitative/getCodeDiffPrice", service.V1_Quantitative_GetCodeDiffPrice)
+	engine.GET("/v1/quantitative/getCodeDiffPrice", service.V1_Quantitative_GetCodeDiffPrice) // 差价
+	engine.GET("/v1/quantitative/getStockList", service.V1_Quantitative_GetStockList)         // 获取所有量化股票
 }

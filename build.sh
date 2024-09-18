@@ -1,14 +1,17 @@
-#!/bin/bash  
+#!/bin/bash
 
 # if permission denied
-# run script with ` chmod +x build.sh ` 
+# run script with ` chmod +x build.sh `
 readonly ServerName="GoTradeBackServer"
 
 # rm
-# rm ./$ServerName.tar.gz ./sgrid_app
+rm ./$ServerName.tar.gz ./$ServerName
 
 # compile
+# GOOS=linux GOARCH=amd64
 go build -o $ServerName
 
 # build
-# tar -cvf $ServerName.tar.gz ./sgrid.yml ./sgrid_app ./dist
+tar -cvf $ServerName.tar.gz  $ServerName
+
+#  GOOS=linux GOARCH=amd64 go build -o GoTradeBackServer

@@ -138,7 +138,6 @@ type KlineTodayVo struct {
 func (s *stockComponent) GetKlineToday(stockCode string) (ret KlineTodayVo) {
 	market := StockComponent.GetMarket(stockCode)
 	URL, NAME := utils.ReplaceTarget(constant.TARGET_KLine_TDY, market, stockCode)
-	fmt.Println("URL", URL)
 	resp, err := http.Get(URL)
 	if err != nil {
 		fmt.Println("Error:", err)
@@ -164,14 +163,47 @@ func (s *stockComponent) GetKlineToday(stockCode string) (ret KlineTodayVo) {
 	return ret
 }
 
-func (s *stockComponent) GetDiff(stockCode string) float64 {
+func (s *stockComponent) GetDiff(stockCode string) *StockPrice {
 	GKT := s.GetKlineToday(stockCode)
 	var length = len(GKT.Data.Trends)
 	var curr = strings.Split(GKT.Data.Trends[length-1], ",")[1]
 	var last = strings.Split(GKT.Data.Trends[length-3], ",")[1]
-	fmt.Println("curr", curr)
-	fmt.Println("last", last)
+	var open = strings.Split(GKT.Data.Trends[0], ",")[1]
 	currPrice, _ := strconv.ParseFloat(curr, 64)
 	lastPrice, _ := strconv.ParseFloat(last, 64)
-	return currPrice - lastPrice
+	openPrice, _ := strconv.ParseFloat(open, 64)
+	ret := &StockPrice{
+		CurrentPrice: currPrice,
+		LastPrice:    lastPrice,
+		OpenPrice:    openPrice,
+		Name:         GKT.Data.Name,
+		Code:         GKT.Data.Code,
+	}
+	return ret
+}
+
+type StockPrice struct {
+	CurrentPrice float64
+	LastPrice    float64
+	OpenPrice    float64
+	Code         string
+	Name         string
+}
+
+func (s *StockPrice) GetDiff() float64 {
+	return s.CurrentPrice - s.LastPrice
+}
+
+func (s *StockPrice) GetDiffRate() float64 {
+	return s.GetDiff() / s.CurrentPrice * 100
+}
+
+func (s *StockPrice) GetRate() float64 {
+	return (s.CurrentPrice - s.OpenPrice) / s.CurrentPrice * 100
+}
+
+// 打印结构体的所有信息
+func (s *StockPrice) Info() string {
+	return fmt.Sprintf("股票代码: %s, 股票名称: %s, 当前价格: %.2f, 前两分钟价格: %.2f, 今日开盘价: %.2f, 价格差异: %.2f, 价格差异率: %.2f%%, 开盘至当前涨跌幅: %.2f%%\n",
+		s.Code, s.Name, s.CurrentPrice, s.LastPrice, s.OpenPrice, s.GetDiff(), s.GetDiffRate(), s.GetRate())
 }
