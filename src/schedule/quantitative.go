@@ -41,7 +41,7 @@ func quantitativeJob(cronInstance *cron.Cron) {
 			s := component_stock.StockComponent.GetDiff(code)
 			fmt.Println(s.Info())
 			// 下跌朝上 买入趋势
-			if s.GetRate() > -0.05 && s.GetRate() < 0 && s.GetDiffRate() > 0.0003 {
+			if s.GetRate() > -0.8 && s.GetRate() < 0 && s.GetDiffRate() > 0.3 {
 				fmt.Println("下跌朝上 买入趋势")
 				err = pushMessage(s, 1)
 				if err != nil {
@@ -98,10 +98,11 @@ func pushMessage(s *component_stock.StockPrice, tradeType int) error {
 		msg = "下跌朝上 买入趋势 | "
 	}
 	return mapper.SaveMsg(pojo.TradeMsg{
-		Q_USER_ID:  0,
-		Q_CODE:     s.Code,
-		T_TYPE:     tradeType,
-		T_PRICE:    s.CurrentPrice,
-		T_SEND_MSG: msg + s.Info(),
+		Q_USER_ID:   0,
+		Q_CODE:      s.Code,
+		T_TYPE:      tradeType,
+		T_PRICE:     s.CurrentPrice,
+		T_SEND_MSG:  msg + s.Info(),
+		CREATE_TIME: time.Now().Format("2006-01-02 15:04:05"),
 	})
 }

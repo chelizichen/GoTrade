@@ -4,6 +4,7 @@ import (
 	"com_sgrid_gotrade/src/components"
 	component_cache "com_sgrid_gotrade/src/components/cache"
 	component_db "com_sgrid_gotrade/src/components/db"
+	"com_sgrid_gotrade/src/components/middleware"
 	"com_sgrid_gotrade/src/router"
 	"com_sgrid_gotrade/src/schedule"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 
 func init() {
 	components.LoadComponents()
+	components.Gin_Server.Use(middleware.Cors())
 	router.LoadRouter(components.Gin_Server)
 	component_db.LoadDB(components.Sgrid_Conf)
 	component_cache.LoadCache(components.Sgrid_Conf)

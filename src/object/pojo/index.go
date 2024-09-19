@@ -1,7 +1,7 @@
 package pojo
 
 type SaveConf struct {
-	ID                            int `json:"id,omitempty"`
+	ID                            int
 	Q_TYPE                        int
 	Q_CODE                        string
 	Q_PERSONAL_ASSETS             string

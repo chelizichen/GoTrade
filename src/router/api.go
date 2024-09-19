@@ -33,4 +33,8 @@ func LoadRouter(engine *gin.Engine) {
 
 	engine.GET("/v1/quantitative/getCodeDiffPrice", service.V1_Quantitative_GetCodeDiffPrice) // 差价
 	engine.GET("/v1/quantitative/getStockList", service.V1_Quantitative_GetStockList)         // 获取所有量化股票
+
+	engine.GET("/v1/quantitative/queryTrades", service.V1_Quantitative_QueryTrades) // 获取量化交易数据
+	engine.POST("/v1/quantitative/queryConfs", service.V1_Quantitative_QueryConfs)  // 获取量化交易数据
+
 }
