@@ -14,6 +14,8 @@ func LoadRouter(engine *gin.Engine) {
 	engine.GET("/v1/stockBaseHQ/get_kline_his", validate.StockCodeCheck, service.V1_StockBaseHQ_GET_KLINE_HIS)
 	engine.GET("/v1/stockBaseHQ/get_kline_today", validate.StockCodeCheck, service.V1_StockBaseHQ_GET_KLINE_TODAY)
 	engine.GET("/v1/stockBaseHQ/get_stock_base_info", validate.StockCodeCheck, service.V1_StockBaseHQ_GET_STOCK_BASE_INFO)
+	engine.GET("/v1/stockBaseHQ/get_stock_now_hq", validate.StockCodeCheck, service.V1_StockBaseHQ_GET_STOCK_NOW_HQ)
+	engine.GET("/v1/stockBaseHQ/get_bk_from_stock", validate.StockCodeCheck, service.V1_StockBaseHQ_GET_BK_FROM_STOCK)
 	engine.GET("/v1/stockBaseHQ/get_trade_val", service.V1_StockBaseHQ_GET_TRADE_VAR)
 	// 交易
 	engine.GET("/v1/stockTrade/trade_sj", service.V1_StockTrade_TRADE_SJ) // 市价

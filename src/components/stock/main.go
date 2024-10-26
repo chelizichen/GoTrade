@@ -2,6 +2,7 @@ package component_stock
 
 import (
 	"com_sgrid_gotrade/src/components/constant"
+	"com_sgrid_gotrade/src/object/vo"
 	"com_sgrid_gotrade/src/utils"
 	"encoding/json"
 	"fmt"
@@ -63,25 +64,7 @@ func (s *stockComponent) GetStockHQ(target string) (map[string]string, error) {
 	return result, nil
 }
 
-type KlineHisVo struct {
-	Rc     int    `json:"rc"`
-	Rt     int    `json:"rt"`
-	Svr    int    `json:"svr"`
-	Lt     int    `json:"lt"`
-	Full   int    `json:"full"`
-	Dlmkts string `json:"dlmkts"`
-	Data   struct {
-		Code      string   `json:"code"`
-		Market    int      `json:"market"`
-		Name      string   `json:"name"`
-		Decimal   int      `json:"decimal"`
-		Dktotal   int      `json:"dktotal"`
-		PreKPrice float64  `json:"preKPrice"`
-		Klines    []string `json:"klines"`
-	} `json:"data"`
-}
-
-func (s *stockComponent) GetKlineHis(stockCode string) (ret KlineHisVo) {
+func (s *stockComponent) GetKlineHis(stockCode string) (ret vo.VoKlineHis) {
 	market := StockComponent.GetMarket(stockCode)
 	URL, NAME := utils.ReplaceTarget(constant.TARGET_KLine_HIS, market, stockCode)
 	fmt.Println("URL", URL)
@@ -110,32 +93,7 @@ func (s *stockComponent) GetKlineHis(stockCode string) (ret KlineHisVo) {
 	return ret
 }
 
-type KlineTodayVo struct {
-	Rc     int    `json:"rc"`
-	Rt     int    `json:"rt"`
-	Svr    int    `json:"svr"`
-	Lt     int    `json:"lt"`
-	Full   int    `json:"full"`
-	Dlmkts string `json:"dlmkts"`
-	Data   struct {
-		Code          string   `json:"code"`
-		Market        int      `json:"market"`
-		Type          int      `json:"type"`
-		Status        int      `json:"status"`
-		Name          string   `json:"name"`
-		Decimal       int      `json:"decimal"`
-		PreSettlement float64  `json:"preSettlement"`
-		PreClose      float64  `json:"preClose"`
-		Beticks       string   `json:"beticks"`
-		TrendsTotal   int      `json:"trendsTotal"`
-		Time          int      `json:"time"`
-		Kind          int      `json:"kind"`
-		PrePrice      float64  `json:"prePrice"`
-		Trends        []string `json:"trends"`
-	} `json:"data"`
-}
-
-func (s *stockComponent) GetKlineToday(stockCode string) (ret KlineTodayVo) {
+func (s *stockComponent) GetKlineToday(stockCode string) (ret vo.VoKlineToday) {
 	market := StockComponent.GetMarket(stockCode)
 	URL, NAME := utils.ReplaceTarget(constant.TARGET_KLine_TDY, market, stockCode)
 	resp, err := http.Get(URL)
@@ -272,6 +230,56 @@ type StockBaseInfo struct {
 
 func (s *stockComponent) GetStockBaseInfo(code string, market int) (ret *StockBaseInfo, err error) {
 	URL, NAME := utils.ReplaceTarget(constant.CODE_BASE_INFO, market, code)
+	resp, err := http.Get(URL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	// 将字节切片转换为字符串
+	bodyString := string(bodyBytes)
+	bodyString = strings.ReplaceAll(bodyString, NAME, "")
+	// 移除 JSONP 回调函数部分
+	callbackIndex := strings.Index(bodyString, "(")
+	if callbackIndex >= 0 {
+		bodyString = bodyString[callbackIndex+1 : len(bodyString)-2]
+		bodyString = strings.TrimSpace(bodyString)
+	}
+	json.Unmarshal([]byte(bodyString), &ret)
+	return ret, nil
+}
+
+func (s *stockComponent) GetStockNowHq(code string, market int) (ret *vo.StockNowHq, err error) {
+	URL, NAME := utils.ReplaceTarget(constant.CODE_CURRENT_HQ, market, code)
+	resp, err := http.Get(URL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+	// 将字节切片转换为字符串
+	bodyString := string(bodyBytes)
+	bodyString = strings.ReplaceAll(bodyString, NAME, "")
+	// 移除 JSONP 回调函数部分
+	callbackIndex := strings.Index(bodyString, "(")
+	if callbackIndex >= 0 {
+		bodyString = bodyString[callbackIndex+1 : len(bodyString)-2]
+		bodyString = strings.TrimSpace(bodyString)
+	}
+	json.Unmarshal([]byte(bodyString), &ret)
+	return ret, nil
+}
+
+func (s *stockComponent) GetBkByStock(code string, market int) (ret *vo.StockBk, err error) {
+	URL, NAME := utils.ReplaceTarget(constant.CODE_BK, market, code)
 	resp, err := http.Get(URL)
 	if err != nil {
 		return nil, err
