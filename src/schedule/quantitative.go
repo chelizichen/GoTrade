@@ -18,8 +18,16 @@ func InitSchedule() {
 	loadStocksTask()
 	var cronInstance = cron.New()
 	quantitativeJob(cronInstance)
+	tradeDirection(cronInstance)
 	loadStocks(cronInstance)
 	cronInstance.Start()
+}
+
+func tradeDirection(cronInstance *cron.Cron) {
+	var scheduledTask = func() {
+		component_stock.GetTradeVal()
+	}
+	AddJobWhenTradeTime(cronInstance, scheduledTask)
 }
 
 func quantitativeJob(cronInstance *cron.Cron) {
@@ -51,18 +59,22 @@ func quantitativeJob(cronInstance *cron.Cron) {
 		}
 		fmt.Println("quantitativeJob 执行任务结束")
 	}
+	AddJobWhenTradeTime(cronInstance, scheduledTask)
+}
+
+func AddJobWhenTradeTime(cronInstance *cron.Cron, job cron.FuncJob) {
 	// 定义每天9:30到15:00之间每两分钟执行一次
-	err := cronInstance.AddFunc("0 * 9-15 * * 1-5", scheduledTask) // 从9:00到14:59的每分钟
+	err := cronInstance.AddFunc("0 * 9-15 * * 1-5", job) // 从9:00到14:59的每分钟
 	if err != nil {
 		fmt.Println("任务注册错误:", err)
 		return
 	}
-	err = cronInstance.AddFunc("30-59 9 * * 1-5", scheduledTask) // 从9:30到9:59的每分钟
+	err = cronInstance.AddFunc("30-59 9 * * 1-5", job) // 从9:30到9:59的每分钟
 	if err != nil {
 		fmt.Println("任务注册错误:", err)
 		return
 	}
-	err = cronInstance.AddFunc("0-59 15 * * 1-5", scheduledTask) // 从15:00到15:59的每分钟
+	err = cronInstance.AddFunc("0 15 * * 1-5", job) // 从15:00到15:59的每分钟
 	if err != nil {
 		fmt.Println("任务注册错误:", err)
 		return

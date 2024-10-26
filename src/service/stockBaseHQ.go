@@ -38,3 +38,8 @@ func V1_StockBaseHQ_GET_KLINE_TODAY(c *gin.Context) {
 	resp := component_stock.StockComponent.GetKlineToday(code)
 	utils.AbortWithSucc(c, resp.Data)
 }
+
+func V1_StockBaseHQ_GET_TRADE_VAR(c *gin.Context) {
+	rsp := component_stock.GetTradeVal()
+	utils.AbortWithSucc(c, rsp)
+}
