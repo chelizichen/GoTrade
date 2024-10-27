@@ -9,7 +9,7 @@ rm ./$ServerName.tar.gz ./$ServerName
 
 # compile
 # GOOS=linux GOARCH=amd64
-go build -o $ServerName
+GOOS=linux GOARCH=amd64 go build -o $ServerName
 
 # build
 tar -cvf $ServerName.tar.gz  $ServerName
