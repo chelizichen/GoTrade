@@ -123,6 +123,8 @@ func GetTradeVal() map[string]float64 {
 	zl := (rsp["超大单流入"] + rsp["大单流入"]) - (rsp["超大单流出"] + rsp["大单流出"])
 	zd := (rsp["中单流入"]) - (rsp["中单流出"])
 	xd := (rsp["小单流入"]) - (rsp["小单流出"])
+	cjl := (rsp["超大单流入"] + rsp["大单流入"] + rsp["中单流入"] + rsp["小单流入"])
+	fmt.Printf(">> 成交量      : %f  亿元 \n", cjl/10000/10000)
 	fmt.Printf(">> 主力净流入   : %f  亿元 \n", zl/10000/10000)
 	fmt.Printf(">> 中单净流入   : %f  亿元 \n", zd/10000/10000)
 	fmt.Printf(">> 小单净流入   : %f  亿元 \n", xd/10000/10000)
